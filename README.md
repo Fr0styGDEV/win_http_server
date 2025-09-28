@@ -22,8 +22,69 @@ Designed as a reusable starting point for future projects (like file transfer ap
 - CMake ≥ 3.20
 - GCC ≥ 13 (C++20 support)
 
-Make sure these are installed and on your PATH:
-```bash
-g++ --version
-cmake --version
-ninja --version
+Verify you have the tools installed and on PATH:
+
+    g++ --version
+    cmake --version
+    ninja --version
+
+---
+
+## Building
+
+### Command line (MinGW + Ninja)
+
+    # From project root
+    cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+    cmake --build build
+
+### VS Code
+- Install the **CMake Tools** extension.
+- Open this folder in VS Code.
+- Select Kit → `GCC x86_64-w64-mingw32` (from MSYS2 MinGW).
+- Select Generator → `Ninja`.
+- Hit **Build**.
+
+---
+
+## Running
+Run the server (defaults to port 8080):
+
+    ./build/win_http_server.exe
+
+Test endpoints:
+
+    curl http://127.0.0.1:8080/
+    curl http://127.0.0.1:8080/hello
+    curl.exe -X POST http://127.0.0.1:8080/echo -d "ping"   # on Windows PowerShell
+
+---
+
+## Usage Example
+A simple app using the server:
+
+    #include "http_server.hpp"
+
+    int main() {
+        HttpServer server(8080);
+
+        server.route("GET", "/", [](const HttpRequest& req, HttpResponse& res){
+            res.headers["content-type"] = "text/plain";
+            res.body = "Hello from win_http_server!";
+        });
+
+        server.run();
+    }
+
+---
+
+## Project structure
+
+    win_http_server/
+    ├─ CMakeLists.txt
+    └─ src/
+       ├─ main.cpp
+       ├─ http_server.hpp
+       └─ http_server.cpp
+
+---
